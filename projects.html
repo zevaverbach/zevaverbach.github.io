@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Zev Averbach</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/basscss/7.0.0/css/basscss.css" />
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+		<style>
+			body {font-family: "Open Sans", sans-serif}
+			.h0 {font-size: 30pt;}
+            nav a[target="_blank"]:after {content: url("icons8-external-link-50.png");
+                                      filter: invert(100%);}
+		</style>
+    </head>
+
+    <body>
+
+		<div id="container" class="m2">
+
+
+			<header class="m2 clearfix">
+
+				<div class="h0 bold">
+					<a href="index.html" style="text-decoration: none; color: inherit;">Zev Averbach's Projects</a>
+				</div>
+
+				<nav class="white bg-white"> 
+					<div id="nav">
+						<a href="index.html" class="btn btn-primary not-rounded py2 bg-blue">About</a>
+						<a href="projects.html" class="btn btn-primary not-rounded py2" style="color: rgba(255, 255, 255, .5); background-color: rgba(46,204,64, .4);">Projects</a>
+						<a href="https://www.linkedin.com/in/zev-averbach-964572156/" target="_blank" class="btn btn-primary not-rounded py2 bg-yellow">LinkedIn</a>
+						<a href="https://github.com/zevaverbach" target="_blank" class="btn btn-primary not-rounded py2 bg-red">Github</a>
+					</div>
+
+				</nav>
+
+			</header>
+
+
+			<div id="content" class="clear h2 m2 sm-col sm-col-8 md-col-7 lg-col-6">
+
+                <div id="tappt" class="ml2">
+                    <span class="h1">Tappt</span>
+                    <p class="ml2 mt1 h3">In 2015 a couple friends and I made <a href="https://www.tappt.co" target="_blank">Tappt (external link)</a> at a hackathon.  It's a web app that allows users to search for keywords inside videos.  We've since fleshed it out into a commercial service.  It's running on Python 3.6 and uses Celery.</a>
+                </div>
+
+                <div id="auto-assigner" class="ml2">
+                    <span class="h1">Auto-Assigner</span>
+                    <p class="ml2 mt1 h3">In the fall of 2017 I designed, implemented, and deployed a work assigner for <a href="https://avtranscription.com" target="_blank">Averbach Transcription (external link)</a> in Python 3.6.  This is run as a background process, assigning transcription work automatically based on transcribers' current workloads and general capacities. It saves Averbach Transcription 5-10 hours of labor every week in assigning and re-assigning transcription projects. This is a private project.</p>
+                </div>
+
+                <div id="auto-invoicer" class="ml2">
+                    <span class="h1">Automatic Invoice Generation</span>
+                    <p class="ml2 mt1 h3">In the summer of 2016 I designed, implemented, and deployed automatic invoice generation for <a href="https://avtranscription.com" target="_blank">Averbach Transcription (external link)</a> in Python 3.5.  This integrates with Freshbooks web API v2.1, generating invoices from completed transcription projects. It saves Averbach Transcription 10+ hours of labor every month compared to the old manual invoicing process. This is a private project.</p>
+                </div>
+
+
+                <div id="budget-bot" class="ml2">
+                    <span class="h1">Budget Bot (for Twilio blog)</span>
+                    <p class="ml2 mt1 h3">In the summer of 2017 I made a fun little proof of concept SMS budget bot for <a href="https://www.twilio.com/blog/2017/06/check-daily-spending-sms-python-plaid-twilio.html" target="_blank">a blog post (external link)</a> I wrote for the Twilio Voices Blog. </a>
+                </div>
+
+
+			</div>
+
+
+		</div>
+
+    </body>
+
+</html>
