@@ -30,7 +30,6 @@ window.onload = function() {
         }
     })
     title_element = d.getElementById('title')
-    console.log(current_page_name)
     if (current_page_name == 'blog') {
         d.title = d.title.concat(' | Blog')
         title_element.text = title_element.text.concat("\'s Blog")
