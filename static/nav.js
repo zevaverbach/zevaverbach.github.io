@@ -12,6 +12,9 @@ var splitPath = function(path) {
 d = window.document
 
 var get_current_page_name = function() {
+    if (d.URL == 'https://averba.ch/') {
+        return 'about'
+    }
     page_name = splitPath(d.URL).filename
     if (!['projects', 'index'].includes(page_name)) {
 		return 'blog' } 
