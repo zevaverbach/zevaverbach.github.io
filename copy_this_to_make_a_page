@@ -7,11 +7,11 @@
     <style>
 			body {font-family: "Open Sans", sans-serif}
 			.h0 {font-size: 30pt;}
-            nav a[target="_blank"]:after {content: url("/static/_external_link.png");
+            nav a[target="_blank"]:after {content: url("./static/_external_link.png");
                                           filter: invert(100%);}
             .current-page {opacity: .3;}
 		</style>
-    <script src="/static/_nav.js"></script>
+    <script src="./static/_nav.js"></script>
     
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123137342-1"></script>
@@ -33,17 +33,27 @@
 
     <nav class="white bg-white">
         <div id="nav">
-            <a href="/" class="btn btn-primary not-rounded py2 bg-blue">About</a>
-            <a href="/projects" class="btn btn-primary not-rounded py2 bg-green">Projects</a>
+            <a href="/" class="btn btn-primary not-rounded py2" style="background: #F6511D;">About</a>
             
-                <a href="/blog" class="btn btn-primary not-rounded py2 bg-white" style="color: rgba(0, 0, 0, .7); border: 1px solid rgba(0, 0, 0, .1);">Blog</a>
+                
+                    <a href="https://github.com/zevaverbach/"
+                       class="btn btn-primary not-rounded py2"
+                       
+                           target="_blank"
+                       
+                       style="background: #FFB400;">Github</a>
+                
+
             
-            
-                <a href="https://www.linkedin.com/in/zev-averbach-964572156/" target="_blank" class="btn btn-primary not-rounded py2 bg-yellow">LinkedIn</a>
-            
-            
-                <a href="https://github.com/zevaverbach/" target="_blank" class="btn btn-primary not-rounded py2 bg-red">Github</a>
-            
+                
+                    <a href="https://www.linkedin.com/in/zev-averbach-964572156/"
+                       class="btn btn-primary not-rounded py2"
+                       
+                           target="_blank"
+                       
+                       style="background: #00A6ED;">LinkedIn</a>
+                
+
             
         </div>
 
@@ -51,10 +61,11 @@
 
 </header>
     <div id="content" class="clear h2 m2 sm-col sm-col-12 md-col-10 lg-col-8">
-        <a href="/blog"><< back to blog contents</a>
         
-<div id="blog-title" class="h1">Title Of The Post</div>
-<p>Make some paragraphs.</p>
+
+<div>Make some divs...</p>
+<p>and/or make some paragraphs.</p>
+
 
     </div>
 </body>

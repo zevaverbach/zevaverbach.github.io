@@ -33,49 +33,25 @@
 
     <nav class="white bg-white">
         <div id="nav">
+            <a href="/" class="btn btn-primary not-rounded py2" style="background: #F6511D;">About</a>
             
                 
-                    
-                    <a href="index/"
+                    <a href="https://github.com/zevaverbach/"
                        class="btn btn-primary not-rounded py2"
                        
-                       style="color: #80bfff; background: #001f3f;">About</a>
-                
-
-            
-                
-                    
-                    <a href="projects/"
-                       class="btn btn-primary not-rounded py2"
+                           target="_blank"
                        
-                       style="color: #b3dbff; background: #0074D9;">Projects</a>
+                       style="background: #FFB400;">Github</a>
                 
 
             
                 
-                    <a href="blog/" class="btn btn-primary not-rounded py2 bg-white black border">Blog</a>
-                
-
-            
-                
-                    
                     <a href="https://www.linkedin.com/in/zev-averbach-964572156/"
                        class="btn btn-primary not-rounded py2"
                        
                            target="_blank"
                        
-                       style="color: #004966; background: #7FDBFF;">LinkedIn</a>
-                
-
-            
-                
-                    
-                    <a href="https://www.linkedin.com/in/"
-                       class="btn btn-primary not-rounded py2"
-                       
-                           target="_blank"
-                       
-                       style="color: #0e3e14; background: #2ECC40;">Github</a>
+                       style="background: #00A6ED;">LinkedIn</a>
                 
 
             
@@ -85,20 +61,10 @@
 
 </header>
     <div id="content" class="clear h2 m2 sm-col sm-col-12 md-col-10 lg-col-8">
+        <a href="/blog"><< back to blog contents</a>
         
-
-    <div class="h1">Blog Posts</div>
-
-    <ul>
-
-        
-
-            <li><a href="hi">Title Of The Post</a></li>
-
-        
-
-    </ul>
-
+<div id="blog-title" class="h1">Title Of The Post</div>
+<p>Make some paragraphs.</p>
 
     </div>
 </body>

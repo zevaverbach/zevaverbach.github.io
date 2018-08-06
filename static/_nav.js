@@ -21,11 +21,17 @@ var getCurrentPageName = function() {
 
     if (page_name == 'index') return 'about'
 
-    if (!['projects', 'index'].includes(page_name)) return 'blog'
-
 	return page_name
 
 }
+
+var toTitleCase = function (str) {
+	str = str.toLowerCase().split(' ');
+	for (var i = 0; i < str.length; i++) {
+		str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1);
+	}
+	return str.join(' ');
+};
 
 
 window.onload = function() {
@@ -37,11 +43,21 @@ window.onload = function() {
         }
     })
     title_element = d.getElementById('title')
-    if (current_page_name == 'blog') {
-        d.title = d.title.concat(' | Blog')
-        title_element.text = title_element.text.concat("\'s Blog")
-    } else if (current_page_name == 'projects') {
-        d.title = d.title.concat(' | Projects')
-        title_element.text = title_element.text.concat("\'s Projects")
+    if (current_page_name != 'about') {
+
+        console.log('hi')
+        d.title = d.title.concat(` | ${toTitleCase(current_page_name)}`)
+        title_element.text = title_element.text.concat(`'s ${toTitleCase(current_page_name)}`)
     }
 }
+
+//    title_element = d.getElementById('title')
+//
+//    if (current_page_name == 'blog') {
+//        d.title = d.title.concat(' | Blog')
+//        title_element.text = title_element.text.concat("\'s Blog")
+//    } else if (current_page_name == 'projects') {
+//        d.title = d.title.concat(' | Projects')
+//        title_element.text = title_element.text.concat("\'s Projects")
+//    }
+//}
