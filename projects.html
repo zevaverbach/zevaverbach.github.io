@@ -6,10 +6,12 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <style>
 			body {font-family: "Open Sans", sans-serif}
-			.h0 {font-size: 30pt;}
+			.h0 {font-size: 30pt}
             nav a[target="_blank"]:after {content: url("./static/_external_link.png");
-                                          filter: invert(100%);}
-            .current-page {opacity: .3;}
+                                          filter: invert(100%)}
+            .current-page {opacity: .3}
+            @media (min-width: 900px) { #content { width: 50%} }
+            @media (min-width: 1px) and (max-width: 899px) { #content { width: 80%} }
 
 		</style>
     <script src="./static/_nav.js"></script>
@@ -25,8 +27,10 @@
             </script>
     
 </head>
-<body>
+<body class="center">
     <header class="m2 clearfix">
+
+        <img style="border-radius: 20%" src="https://www.gravatar.com/avatar/fe783e04644862c30823614f31b9a996/?s=360" />
 
     <div class="h0 bold">
         <a id="title" href="/" style="text-decoration: none; color: inherit;">Zev Averbach</a>
@@ -40,7 +44,7 @@
                     <a href="/"
                        class="btn btn-primary not-rounded py2"
                        
-                       style="color: #80bfff; background: #001f3f;">About</a>
+                       style="color: #222; background: #ded5d1;">About</a>
                 
 
             
@@ -49,7 +53,7 @@
                     <a href="projects"
                        class="btn btn-primary not-rounded py2"
                        
-                       style="color: #b3dbff; background: #0074D9;">Projects</a>
+                       style="color: #222; background: #d4c8c4;">Projects</a>
                 
 
             
@@ -60,7 +64,7 @@
                        
                            target="_blank"
                        
-                       style="color: #004966; background: #7FDBFF;">Resume</a>
+                       style="color: #222; background: #cabbb7;">Resume</a>
                 
 
             
@@ -71,7 +75,7 @@
                        
                            target="_blank"
                        
-                       style="color: #0e3e14; background: #2ECC40;">LinkedIn</a>
+                       style="color: #222; background: #bdb0ac;">LinkedIn</a>
                 
 
             
@@ -82,7 +86,7 @@
                        
                            target="_blank"
                        
-                       style="color: #00662c; background: #01FF70;">Github</a>
+                       style="color: #222; background: #8c8080;">Github</a>
                 
 
             
@@ -91,17 +95,18 @@
     </nav>
 
 </header>
-    <div id="content" class="clear h2 m2 sm-col sm-col-12 md-col-10 lg-col-8">
+    <div id='content' style="margin: 0 auto">
         
-    <p class="mx2 ml2 h3">
+    <p class="mx2 h3">
     All of these projects are closed source, but the code may be viewed by way of an NDA. 
     To see some of my open-source work, please see 
     <a target="_blank" href="https://github.com/zevaverbach/">my Github profile (external link)</a>.
     </p>
 
-    <div id="tappt" class="ml2">
+    <hr>
+    <div id="tappt">
         <span class="h1">Transcribely</span>
-        <p class="ml2 mt1 h3">
+        <p class="mt1 h3">
             In late 2018 at the Recurse Center I made a prototype of 
             a human-machine transcription interface I like to call 
             <a href="https://transcribely.netlify.com" target="_blank">
@@ -111,10 +116,11 @@
         </p>
 
     </div>
+    <hr>
 
-    <div id="tappt" class="ml2">
+    <div id="tappt">
         <span class="h1">Tappt</span>
-        <p class="ml2 mt1 h3">
+        <p class="mt1 h3">
             In 2015 a couple friends and I made 
             <a href="https://www.tappt.co" target="_blank">
                 Tappt (external link)</a> 
@@ -124,9 +130,10 @@
         </p>
     </div>
 
-    <div id="auto-assigner" class="ml2">
+    <hr>
+    <div id="auto-assigner">
         <span class="h1">Auto-Assigner</span>
-        <p class="ml2 mt1 h3">
+        <p class="mt1 h3">
             In the fall of 2017 I designed, implemented, and deployed a 
             work assigner for 
             <a href="https://avtranscription.com" target="_blank">
@@ -138,9 +145,10 @@
         </p>
     </div>
 
-    <div id="auto-invoicer" class="ml2">
+    <hr>
+    <div id="auto-invoicer">
         <span class="h1">Automatic Invoice Generation</span>
-        <p class="ml2 mt1 h3">
+        <p class="mt1 h3">
             In the summer of 2016 I designed, implemented, and deployed 
             automatic invoice generation for 
             <a href="https://avtranscription.com" target="_blank">
