@@ -5,13 +5,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/basscss/7.0.0/css/basscss.css" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <style>
-			body {font-family: "Open Sans", sans-serif}
-			.h0 {font-size: 30pt}
+			h1 {font-family: "Open Sans", sans-serif;}
+            p {
+                  font-size: 16px }
+			.h0 {font-size: 30pt; 
+                 font-weight: 800}
             nav a[target="_blank"]:after {content: url("./static/_external_link.png");
                                           filter: invert(100%)}
             .current-page {opacity: .3}
-            @media (min-width: 900px) { #content { width: 50%} }
-            @media (min-width: 1px) and (max-width: 899px) { #content { width: 80%} }
+            #content { width: 400px }
+            p, ul {text-align: left}
 
 		</style>
     <script src="./static/_nav.js"></script>
@@ -28,12 +31,15 @@
     
 </head>
 <body class="center">
-    <header class="m2 clearfix">
+    <header class="mt4 m2 clearfix">
 
-        <img style="border-radius: 20%" src="https://www.gravatar.com/avatar/fe783e04644862c30823614f31b9a996/?s=360" />
+    <img style="margin-bottom: 1em; border-radius: 20%" src="https://www.gravatar.com/avatar/fe783e04644862c30823614f31b9a996/?s=360" />
 
-    <div class="h0 bold">
+    <div class="h0 bold" style="line-height: 1.2em">
         <a id="title" href="/" style="text-decoration: none; color: inherit;">Zev Averbach</a>
+    </div>
+    <div class="h2">
+    Full Stack Developer
     </div>
 
     <nav class="white bg-white">
@@ -98,17 +104,21 @@
     <div id='content' style="margin: 0 auto">
         
 
-    <p class="mx2 ml2 h3">Hi, my name is Zev. I'm a full stack web developer living in Burlington, Vermont.</p>
+    <p class="mx2 ml2 " >
+        I'm a full stack web developer living in Burlington, Vermont.
+        </p>
 
-    <p class="mx2 ml2 h3">I love to help forward-looking businesses solve their worst headaches via technology.
-        <a href="/projects">Here</a> are a few projects I've completed to that effect.
+    <p class="mx2 ml2 " >
+        I love to help forward-looking businesses solve their worst headaches. 
+        <a href="/projects">Here are a few projects</a> I've completed to that effect.
     </p>
 
-    <p class="mx2 ml2 h3" id="availability">
+    <p class="mx2 ml2 " id="availability">
         I'm currently available for full-time employment and contracts. My preferred stack is
     </p>
 
-    <ul class="h3" style="margin: 0 auto; text-align: left; width: 10%">
+    <ul class="" 
+        >
         <li>React.js</li>
         <li>Python</li>
         <li>Flask</li>
@@ -118,7 +128,7 @@
         <li>AWS</li>
     </ul>
 
-    <p class="mt2 mx2 ml2 h3" id="contact">You can reach me at
+    <p class="mt2 mx2 ml2 " id="contact">You can reach me at
         <a title="Email Zev Averbach" href="mailto:zev@averba.ch">zev@averba.ch</a>.
     </p>
 

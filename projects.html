@@ -5,13 +5,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/basscss/7.0.0/css/basscss.css" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <style>
-			body {font-family: "Open Sans", sans-serif}
-			.h0 {font-size: 30pt}
+			h1 {font-family: "Open Sans", sans-serif;}
+            p {
+                  font-size: 16px }
+			.h0 {font-size: 30pt; 
+                 font-weight: 800}
             nav a[target="_blank"]:after {content: url("./static/_external_link.png");
                                           filter: invert(100%)}
             .current-page {opacity: .3}
-            @media (min-width: 900px) { #content { width: 50%} }
-            @media (min-width: 1px) and (max-width: 899px) { #content { width: 80%} }
+            #content { width: 400px }
+            p, ul {text-align: left}
 
 		</style>
     <script src="./static/_nav.js"></script>
@@ -28,12 +31,15 @@
     
 </head>
 <body class="center">
-    <header class="m2 clearfix">
+    <header class="mt4 m2 clearfix">
 
-        <img style="border-radius: 20%" src="https://www.gravatar.com/avatar/fe783e04644862c30823614f31b9a996/?s=360" />
+    <img style="margin-bottom: 1em; border-radius: 20%" src="https://www.gravatar.com/avatar/fe783e04644862c30823614f31b9a996/?s=360" />
 
-    <div class="h0 bold">
+    <div class="h0 bold" style="line-height: 1.2em">
         <a id="title" href="/" style="text-decoration: none; color: inherit;">Zev Averbach</a>
+    </div>
+    <div class="h2">
+    Full Stack Developer
     </div>
 
     <nav class="white bg-white">
@@ -97,16 +103,13 @@
 </header>
     <div id='content' style="margin: 0 auto">
         
-    <p class="mx2 h3">
-    All of these projects are closed source, but the code may be viewed by way of an NDA. 
-    To see some of my open-source work, please see 
-    <a target="_blank" href="https://github.com/zevaverbach/">my Github profile (external link)</a>.
-    </p>
 
-    <hr>
     <div id="tappt">
-        <span class="h1">Transcribely</span>
-        <p class="mt1 h3">
+        <span class="h1 bold">Transcribely
+            <a href='http://www.recurse.com' title='Made with love at the Recurse Center'>
+            </a>
+        </span>
+        <p class="mt1">
             In late 2018 at the Recurse Center I made a prototype of 
             a human-machine transcription interface I like to call 
             <a href="https://transcribely.netlify.com" target="_blank">
@@ -114,13 +117,12 @@
             It's pretty amazing, in that it saves upwards of 50% of labor
             compared to a human transcribing from scratch. (React.js + Flask)
         </p>
-
     </div>
     <hr>
 
     <div id="tappt">
-        <span class="h1">Tappt</span>
-        <p class="mt1 h3">
+        <span class="h1 bold">Tappt</span>
+        <p class="mt1 ">
             In 2015 a couple friends and I made 
             <a href="https://www.tappt.co" target="_blank">
                 Tappt (external link)</a> 
@@ -132,8 +134,8 @@
 
     <hr>
     <div id="auto-assigner">
-        <span class="h1">Auto-Assigner</span>
-        <p class="mt1 h3">
+        <span class="h1 bold">Auto-Assigner</span>
+        <p class="mt1 ">
             In the fall of 2017 I designed, implemented, and deployed a 
             work assigner for 
             <a href="https://avtranscription.com" target="_blank">
@@ -147,8 +149,8 @@
 
     <hr>
     <div id="auto-invoicer">
-        <span class="h1">Automatic Invoice Generation</span>
-        <p class="mt1 h3">
+        <span class="h1 bold">Automatic Invoice Generation</span>
+        <p class="mt1 ">
             In the summer of 2016 I designed, implemented, and deployed 
             automatic invoice generation for 
             <a href="https://avtranscription.com" target="_blank">
