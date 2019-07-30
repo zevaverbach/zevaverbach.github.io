@@ -110,7 +110,7 @@
 					<a href="/blog">&lt;&lt; back to blog index</a>
 					
 
-<div id="blog-title" class="h1 m3">How I Got "Go To Definition" Working in Vim in 2019</div>
+<div id="blog-title" class="h1 py2 left-align">How I Got "Go To Definition" Working in Vim in 2019</div>
 
 <p>
 	<code>
@@ -122,7 +122,6 @@ set tags=tags
 autocmd BufWritePost *.py silent! !ctags -R --python-kinds=-i --languages=python 2&gt; /dev/null &amp;
 
 $ brew install ctags
-
 		</pre>	
 	</code>
 </p>
@@ -135,7 +134,7 @@ $ brew install ctags
 	compared to vim.
 </p>
 
-<div class="h2 m3">What I Miss From IDEs</div>
+<div class="h2 py2 left-align">What I Miss From IDEs</div>
 
 <p>
 Because I'm not yet a <code>sed</code>/<code>grep</code> expert in the context of search and replace, I still miss the
@@ -148,7 +147,7 @@ Because I'm not yet a <code>sed</code>/<code>grep</code> expert in the context o
 	<code>ctrl-]</code> as it is by default in vim.
 </p>
 
-<div class="h2 m3">Getting It To Work + Timesucks to Avoid</div>
+<div class="h2 py2 left-align">Getting It To Work + Timesucks to Avoid</div>
 
 <p>
 	As with most of my efforts to make vim more ergonomic/IDE-like, getting "go to definition" working took
@@ -156,9 +155,9 @@ Because I'm not yet a <code>sed</code>/<code>grep</code> expert in the context o
 </p>
 <p>
 	For the uninitiated, while vim comes with ctrl-] out of the box, it
-	doesn't actually know where something is defined unless there's at least one `tags` file and you've told vim
-	where to find it/them. You can run `ctags` manually, but this can get tiresome if you want vim to
-	always have an updated index of where all the definitions are in your project: functions, modules,
+	doesn't actually know where something is defined unless there's at least one <code>tags</code> file and you've told vim
+	where to find it/them. You can run <code>ctags</code> manually, but this can get tiresome if you want vim to
+	always have an updated idea of where all the definitions are in your project: functions, modules,
 	constants, classes, types, etc.
 </p>
 <p>
@@ -172,10 +171,6 @@ but for whatever reason the tags file never refreshed on commit. Avoid this rabb
 <p>
   What ended up working to refresh the tags file *on every save* was a modified version of something I found in the comments of <a
 		href="https://stackoverflow.com/a/155515/4386191">a StackOverflow answer</a>.
-	I was only interested to start out with in tagging my Python projects, so I
-	modified it accordingly.  
-</p>
-<p>
 	 However, without <code>python-kinds=-i</code>, "go to definition"
 			didn't work as expected on MacOS (it was fine on an Ubuntu droplet).  Inspecting my
 			<code>tags</code> file,
@@ -183,23 +178,31 @@ but for whatever reason the tags file never refreshed on commit. Avoid this rabb
 	module, where the import was, not to the definition of the entity.
 </p>
 
-<div class="h2 m3">Final Product + User Experience</div>
+<div class="h2 py2 left-align">Final Product + Developer Experience</div>
 
 <p>
-	What's nice about this usage of ctags is 1) it runs in the background and never
+	I can now very quickly navigate to where whatever's under my cursor was defined
+	with a single keystroke. What's nice about this usage of ctags is 1) it runs in the background and never
 	interrupts you, 2) it's fast, and 3) it runs every time you save.
-	I haven't tried this at all with JS yet, and Mr. Pope alludes to that <code>ctags</code> might not be as
-	helpful there, but it is lightning fast and accurate for jumping around in large Python-based
+	I haven't tried this at all with JS yet (will be trying <a
+																														href="https://github.com/artemave/js-editor-tags">this</a>), <strike>and Mr. Pope alludes to that <code>ctags</code> might not be as
+	helpful there</strike>, but it is lightning fast and accurate for jumping around in large Python-based
 	projects.
 </p>
 
-<div class="h2 m3">Bonus: <code>gf</code></div>
+<div class="h2 py2 left-align">Bonus: <code>gf</code></div>
 
 <p>
 <code>gf</code> bridges a significant gap that ctags don't cover:
 It stands for "go to file".  Type <code>gf</code> in normal mode when your cursor's over a filename, and it opens it!
 </p>
 
+<div class="h2 py2 left-align">Next Thing to Try: Tagging dependencies and the Python standard lib</div>
+<p>
+  As mentioned above, you can tell vim about multiple <code>tags</code> files in multiple paths. It
+	doesn't come up as often that I want to "go to definition" of library code, but I can see how it
+	might come in handy.
+</p>
 
 			</div>
 </body>
