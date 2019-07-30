@@ -56,7 +56,7 @@
             
                 
                     
-                    <a href="projects"
+                    <a href="/projects/"
                        class="btn btn-primary not-rounded py2"
                        
                        style="color: #222; background: #d4c8c4;">Projects</a>
@@ -64,7 +64,7 @@
 
             
                 
-                    <a href="blog/" class="btn btn-primary not-rounded py2 bg-white black border">Blog</a>
+                    <a href="/blog/" class="btn btn-primary not-rounded py2 bg-white black border">Blog</a>
                 
 
             
@@ -164,7 +164,7 @@ Because I'm not yet a <code>sed</code>/<code>grep</code> expert in the context o
 	The first option I found for automatically updating the tags file didn't work as advertised: I tried to <a
 		href="https://tbaggery.com/2011/08/08/effortless-ctags-with-git.html">set up git hooks like Mr.
 		Pope suggested</a>, 
-but for whatever reason the tags file never refreshed on commit. Avoid this rabbit hold!  And
+but for whatever reason the tags file never refreshed on commit. Avoid this rabbit hole!  And
 	anyway, don't you want "go to definition" to work between commits too?
 </p>
 
@@ -181,7 +181,7 @@ but for whatever reason the tags file never refreshed on commit. Avoid this rabb
 <div class="h2 py2 left-align">Final Product + Developer Experience</div>
 
 <p>
-	I can now very quickly navigate to where whatever's under my cursor was defined
+	I can now very quickly navigate to the definition of whatever's under my cursor
 	with a single keystroke. What's nice about this usage of ctags is 1) it runs in the background and never
 	interrupts you, 2) it's fast, and 3) it runs every time you save.
 	I haven't tried this at all with JS yet (will be trying <a
@@ -199,7 +199,7 @@ It stands for "go to file".  Type <code>gf</code> in normal mode when your curso
 
 <div class="h2 py2 left-align">Next Thing to Try: Tagging dependencies and the Python standard lib</div>
 <p>
-  As mentioned above, you can tell vim about multiple <code>tags</code> files in multiple paths. It
+  As alluded to above, you can tell vim about multiple <code>tags</code> files in multiple paths. It
 	doesn't come up as often that I want to "go to definition" of library code, but I can see how it
 	might come in handy.
 </p>
