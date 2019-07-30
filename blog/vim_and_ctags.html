@@ -145,18 +145,27 @@ Because I'm not yet a <code>sed</code>/<code>grep</code> expert in the context o
 
 <p>
 	However, what I was missing most was "go to definition", which I had mapped in VSC and PyCharm to
-	<code>C-]</code> as it is by default in vim.
+	<code>ctrl-]</code> as it is by default in vim.
 </p>
 
 <div class="h2 m3">Getting It To Work + Timesucks to Avoid</div>
 
 <p>
 	As with most of my efforts to make vim more ergonomic/IDE-like, getting "go to definition" working took
-	longer than I had hoped.
-	The low-hanging options didn't work as advertised: I tried to <a
+	longer than I had hoped. 
+</p>
+<p>
+	For the uninitiated, while vim comes with ctrl-] out of the box, it
+	doesn't actually know where something is defined unless there's at least one `tags` file and you've told vim
+	where to find it/them. You can run `ctags` manually, but this can get tiresome if you want vim to
+	always have an updated index of where all the definitions are in your project: functions, modules,
+	constants, classes, types, etc.
+</p>
+<p>
+	The first option I found for automatically updating the tags file didn't work as advertised: I tried to <a
 		href="https://tbaggery.com/2011/08/08/effortless-ctags-with-git.html">set up git hooks like Mr.
 		Pope suggested</a>, 
-but for whatever reason the tags file never refreshed on commit. Avoid this timesuck!  And
+but for whatever reason the tags file never refreshed on commit. Avoid this rabbit hold!  And
 	anyway, don't you want "go to definition" to work between commits too?
 </p>
 
@@ -167,11 +176,11 @@ but for whatever reason the tags file never refreshed on commit. Avoid this time
 	modified it accordingly.  
 </p>
 <p>
-	Then, interestingly, without <code>python-kinds=-i</code> "go to definition"
+	 However, without <code>python-kinds=-i</code>, "go to definition"
 			didn't work as expected on MacOS (it was fine on an Ubuntu droplet).  Inspecting my
 			<code>tags</code> file,
-			it was including imports, which caused by <code>C-]</code> invocations to only jump to the top of the current
-	module, where the import was, not to the definition of the function/module/constant/class.
+			it was including imports, which caused my <code>ctrl-]</code> invocations to only jump to the top of the current
+	module, where the import was, not to the definition of the entity.
 </p>
 
 <div class="h2 m3">Final Product + User Experience</div>
@@ -188,7 +197,7 @@ but for whatever reason the tags file never refreshed on commit. Avoid this time
 
 <p>
 <code>gf</code> bridges a significant gap that ctags don't cover:
-It stands for "go to file".  Type <code>gf</code> when your cursor over a filename, and it opens it!
+It stands for "go to file".  Type <code>gf</code> in normal mode when your cursor's over a filename, and it opens it!
 </p>
 
 
