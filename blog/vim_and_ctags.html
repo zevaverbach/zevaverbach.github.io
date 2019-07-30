@@ -30,7 +30,7 @@
             </script>
     
 </head>
-<body class="center">
+<body class="center mb4">
     <header class="mt4 m2 clearfix">
 
     <img style="margin-bottom: .8em; border-radius: 20%" src="https://www.gravatar.com/avatar/fe783e04644862c30823614f31b9a996/?s=360" />
@@ -106,67 +106,92 @@
     </nav>
 
 </header>
-    <div id='content' style="margin: 0 auto">
-        
+			<div id="blog-content" class="clear h2 m2" style="margin: 0 auto; width: 600px;">
+					<a href="/blog">&lt;&lt; back to blog index</a>
+					
 
-    <div id="tappt">
-        <span class="h1 bold">Transcribely
-            <a href='http://www.recurse.com' title='Made with love at the Recurse Center'>
-            </a>
-        </span>
-        <p class="mt1">
-            In late 2018 at the Recurse Center I made a prototype of 
-            a human-machine transcription interface I like to call 
-            <a href="https://transcribely.netlify.com" target="_blank">
-                Transcribely (external link)</a>.
-            It's pretty amazing, in that it saves upwards of 50% of labor
-            compared to a human transcribing from scratch. (React.js + Flask)
-        </p>
-    </div>
-    <hr>
+<div id="blog-title" class="h1 m3">How I Got "Go To Definition" Working in Vim in 2019</div>
 
-    <div id="tappt">
-        <span class="h1 bold">Tappt</span>
-        <p class="mt1 ">
-            In 2015 a couple friends and I made 
-            <a href="https://www.tappt.co" target="_blank">
-                Tappt (external link)</a> 
-            at a hackathon.  It's a web app that allows users to 
-            search for keywords inside videos.  We've since fleshed it 
-            out into a commercial service. (Python, Flask, JS)
-        </p>
-    </div>
+<p>
+	<code>
+		<pre class="h6" align=left>
+👇👇👇tl;dr 
 
-    <hr>
-    <div id="auto-assigner">
-        <span class="h1 bold">Auto-Assigner</span>
-        <p class="mt1 ">
-            In the fall of 2017 I designed, implemented, and deployed a 
-            work assigner for 
-            <a href="https://avtranscription.com" target="_blank">
-                Averbach Transcription (external link)</a>.
-            This is run as a background process, assigning transcription 
-            work automatically based on transcribers' current workloads. 
-            It saves Averbach Transcription 30+ hours of labor every month 
-            in assigning and re-assigning transcription projects. (Python)
-        </p>
-    </div>
+# .vimrc
+set tags=tags
+autocmd BufWritePost *.py silent! !ctags -R --python-kinds=-i --languages=python 2&gt; /dev/null &amp;
 
-    <hr>
-    <div id="auto-invoicer">
-        <span class="h1 bold">Automatic Invoice Generation</span>
-        <p class="mt1 ">
-            In the summer of 2016 I designed, implemented, and deployed 
-            automatic invoice generation for 
-            <a href="https://avtranscription.com" target="_blank">
-                Averbach Transcription (external link)</a>.
-            This integrates with Freshbooks web API v2.1, generating 
-            invoices from completed transcription projects. It saves 
-            Averbach Transcription 20+ hours of labor every month compared to 
-            the old manual invoicing process. (Python) </p>
-    </div>
+$ brew install ctags
+
+		</pre>	
+	</code>
+</p>
+
+<p>
+  In the last two years I've spent a significant amount of time in PyCharm and a somewhat shorter
+	time with Visual Studio Code, both with vim keyboard bindings, writing mostly Python and JS.  Ultimately, I came back to some
+	flavor of terminal-based vim: First Vim 8, now Neovim.  There were too many missing features in
+	"vim mode" in both of the IDEs, and the speed difference—brain-to-screen—was noticeable
+	compared to vim.
+</p>
+
+<div class="h2 m3">What I Miss From IDEs</div>
+
+<p>
+Because I'm not yet a <code>sed</code>/<code>grep</code> expert in the context of search and replace, I still miss the
+	refactoring tools in PyCharm for renaming and reorganizing code.  Automatic imports is also
+	something I haven't replicated in vim.
+</p>
+
+<p>
+	However, what I was missing most was "go to definition", which I had mapped in VSC and PyCharm to
+	<code>C-]</code> as it is by default in vim.
+</p>
+
+<div class="h2 m3">Getting It To Work + Timesucks to Avoid</div>
+
+<p>
+	As with most of my efforts to make vim more ergonomic/IDE-like, getting "go to definition" working took
+	longer than I had hoped.
+	The low-hanging options didn't work as advertised: I tried to <a
+		href="https://tbaggery.com/2011/08/08/effortless-ctags-with-git.html">set up git hooks like Mr.
+		Pope suggested</a>, 
+but for whatever reason the tags file never refreshed on commit. Avoid this timesuck!  And
+	anyway, don't you want "go to definition" to work between commits too?
+</p>
+
+<p>
+  What ended up working to refresh the tags file *on every save* was a modified version of something I found in the comments of <a
+		href="https://stackoverflow.com/a/155515/4386191">a StackOverflow answer</a>.
+	I was only interested to start out with in tagging my Python projects, so I
+	modified it accordingly.  
+</p>
+<p>
+	Then, interestingly, without <code>python-kinds=-i</code> "go to definition"
+			didn't work as expected on MacOS (it was fine on an Ubuntu droplet).  Inspecting my
+			<code>tags</code> file,
+			it was including imports, which caused by <code>C-]</code> invocations to only jump to the top of the current
+	module, where the import was, not to the definition of the function/module/constant/class.
+</p>
+
+<div class="h2 m3">Final Product + User Experience</div>
+
+<p>
+	What's nice about this usage of ctags is 1) it runs in the background and never
+	interrupts you, 2) it's fast, and 3) it runs every time you save.
+	I haven't tried this at all with JS yet, and Mr. Pope alludes to that <code>ctags</code> might not be as
+	helpful there, but it is lightning fast and accurate for jumping around in large Python-based
+	projects.
+</p>
+
+<div class="h2 m3">Bonus: <code>gf</code></div>
+
+<p>
+<code>gf</code> bridges a significant gap that ctags don't cover:
+It stands for "go to file".  Type <code>gf</code> when your cursor over a filename, and it opens it!
+</p>
 
 
-    </div>
+			</div>
 </body>
 </html>
