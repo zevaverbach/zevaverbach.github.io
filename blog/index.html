@@ -121,5 +121,11 @@
 
 
     </div>
+
+    <script>
+      fetch("https://dev.to/api/articles?username=zev")
+          .then(articles_response => articles_response.json())
+          .then(articles_json => console.log(articles_json))
+    </script>
 </body>
 </html>
