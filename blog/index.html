@@ -5,16 +5,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/basscss/7.0.0/css/basscss.css" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <style>
-			h1 {font-family: "Open Sans", sans-serif;}
-            p {
-                  font-size: 16px }
-			.h0 {font-size: 30pt; 
-                 font-weight: 800}
-            .current-page {opacity: .3}
-            #content { width: 400px }
-            p, ul {text-align: left}
+	h1 {font-family: "Open Sans", sans-serif;}
+        p {
+	  font-size: 16px 
+	}
+	.h0 {
+	  font-size: 30pt; 
+          font-weight: 800
+	}
+        .current-page {opacity: .3}
+        #content { width: 400px }
+        p, ul {text-align: left}
 
-		</style>
+    </style>
     <script src="./static/_nav.js"></script>
     
         <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -25,7 +28,7 @@
                 gtag('js', new Date());
 
                 gtag('config', 'UA-123137342-1');
-            </script>
+        </script>
     
 </head>
 <body class="center">
@@ -114,6 +117,8 @@
         
 
             <li><a href="vim_and_ctags">How I Got &#34;Go To Definition&#34; Working in Vim in 2019</a></li>
+            <li><a href="https://dev.to/zev/how-does-svelte-actually-work-part-1-j9m">How Does Svelte Actually Work? part 1</a></li>
+            <li><a href="https://dev.to/zev/how-does-svelte-actually-work-part-2-3gbp">How Does Svelte Actually Work? part 2</a></li>
 
         
 
@@ -122,10 +127,5 @@
 
     </div>
 
-    <script>
-      fetch("https://dev.to/api/articles?username=zev")
-          .then(articles_response => articles_response.json())
-          .then(articles_json => console.log(articles_json))
-    </script>
 </body>
 </html>
