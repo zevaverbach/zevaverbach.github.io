@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zev Averbach</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/basscss/7.0.0/css/basscss.css" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <style>
+			h1 {font-family: "Open Sans", sans-serif;}
+            p {
+                  font-size: 16px }
+			.h0 {font-size: 30pt; 
+                 font-weight: 800}
+            .current-page {opacity: .3}
+            #content { width: 400px }
+            pre, code, p, ul {text-align: left}
+
+		</style>
+    <script src="./static/_nav.js"></script>
+    
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123137342-1"></script>
+        <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+
+                gtag('config', 'UA-123137342-1');
+            </script>
+    
+</head>
+<body class="center mb4">
+    <header class="mt4 m2 clearfix">
+
+    <img style="margin-bottom: .8em; border-radius: 20%" src="https://www.gravatar.com/avatar/fe783e04644862c30823614f31b9a996/?s=360" />
+
+    <div class="h0 bold" style="line-height: 1.2em">
+        <a id="title" href="/" style="text-decoration: none; color: inherit;">Zev Averbach</a>
+    </div>
+    <div class="h2 mb2">
+    Full Stack Developer
+    </div>
+
+    <nav class="white bg-white">
+        <div id="nav">
+            
+                
+                    
+                    <a href="/"
+                       class="btn btn-primary not-rounded py2"
+                       
+                       style="color: #222; background: #ded5d1;">About</a>
+                
+
+            
+                
+                    
+                    <a href="/projects"
+                       class="btn btn-primary not-rounded py2"
+                       
+                       style="color: #222; background: #d4c8c4;">Projects</a>
+                
+
+            
+                
+                    <a href="/blog" class="btn btn-primary not-rounded py2 bg-white black border">Blog</a>
+                
+
+            
+                
+                    
+                    <a href="https://www.dropbox.com/s/tx7for2jc00y5hj/Zev%20Averbach%20Full%20Stack%20Developer%20Resume%202019.pdf?dl=0"
+                       class="btn btn-primary not-rounded py2"
+                       
+                           target="_blank"
+                       
+                       style="color: #222; background: #cabbb7;">Resume</a>
+                
+
+            
+                
+                    
+                    <a href="https://www.linkedin.com/in/zev-averbach-964572156/"
+                       class="btn btn-primary not-rounded py2"
+                       
+                           target="_blank"
+                       
+                       style="color: #222; background: #bdb0ac;">LinkedIn</a>
+                
+
+            
+                
+                    
+                    <a href="https://github.com/zevaverbach/"
+                       class="btn btn-primary not-rounded py2"
+                       
+                           target="_blank"
+                       
+                       style="color: #222; background: #8c8080;">Github</a>
+                
+
+            
+        </div>
+
+    </nav>
+
+</header>
+			<div id="blog-content" class="clear h2 m2" style="margin: 0 auto; width: 600px;">
+					<a href="/blog">&lt;&lt; back to blog index</a>
+					
+
+<div id="blog-title" class="h1 py2 left-align">Patch Your Idols: Making OSS Work the Way Your Team Does</div>
+
+<p>
+When a critical software package your team uses 1) is open source and 2) isn't working <em>quite</em> the way
+you want or expect it to, patch it so it does! Your team will be more productive and you'll get more
+familiarity with how it works, which could pay dividends down the line.
+</p>
+
+<div class="h2 py2 left-align">Case Study: Apache Airflow</div>
+
+<p>
+One of my responsibilities at work is to help my fellow data engineers be more efficient at their
+work building and maintaining ETL pipelines. The tool we use for this is <a href="https://airflow.apache.org">Apache
+  Airflow</a>, which enables us to define and schedule pipelines. When a
+pipeline has been created, it appears on a list of "DAGs" (directed acyclic graphs) like this:
+</p>
+
+<img src="./static/dags.png" alt="The default view of Airflow's GUI, which is a list of DAGs,
+          including their names, schedule, owner, status (paused/unpaused), recent tasks, last run,
+          DAG runs, and links">
+
+
+<p>In our group this list is significantly longer, long enough to paginate (100 DAGs per page by
+default in Airflow), and some of them are switched to "off" (that first column).
+</p>
+
+
+<div class="h2 py2 left-align">Challenges + Patches</div>
+
+<div class="h3 py2 left-align">Challenge: Where Is My Running DAG?</div>
+
+<img src="./static/dags.png" alt="The default view of Airflow's GUI, which is a list of DAGs,
+          including their names, schedule, owner, status (paused/unpaused), recent tasks, last run,
+          DAG runs, and links">
+
+<p>
+If you see that bright green circle under "DAG Runs" for
+<code>example_branch_dop_operator_v3</code>, that indicates there are three copies
+of that DAG running at this moment. Imagine that you're interested in finding and expanding on a
+running DAG among a list of hundreds: It means either manually perusing multiple pages of DAGs
+looking for those bright green circles or doing a search. For our team the chances that what you've
+come to the Airflow GUI looking for is, indeed, a <em>currently running DAG</em>.
+</p>
+<div class="h3 py2 left-align">Solution: Sort the DAGs by "Running"</div>
+<p>
+This is where we dive into the Airflow code base. I very naughtily did this, as well as the ensuing
+changes, in the <code>site-packages/airflow</code> directory on our live Airflow webserver.
+Sorry/not sorry!
+</p>
+<p>
+Firstly, I right-clicked on one of those bright green "running DAG" circles and did "inspect
+element". This led me eventually to some jQuery which renders the color and number for each of the
+three circles in a DAG's "DAG Runs", each based on a Javascript object with keys like "state" and
+"count". This object is obtained via a <code>fetch</code> to Airflow's back end, namely an endpoint
+called <code>/dag_stats</code>.
+</p>
+
+<p>
+We'll want to sort our DAGs by something in the response to that <code>fetch</code> call. However,
+the <code>/dag_stats</code> endpoint is called <em>after</em> the DAG list page is
+loaded, so we'll have to do a little surgery:
+</p>
+
+<p>
+First let's find this endpoint in Airflow's code base: <code>$ grep -r dag_stats airflow/</code> leads
+us <a
+     href="https://github.com/apache/airflow/blob/a592e732356427b4fd1ed27c890cf82e9cf495f0/airflow/www/views.py#L473">
+  here</a>. 
+<code>payload</code> near the end of that function looks to be a dictionary whose keys are
+<code>dag_id</code>s and whose values are lists of dictionaries, each dictionary containing (among other
+things) the "state", "count", and "color" for each of the possible DAG states. We know there are
+three possible DAG states given the three circles in the GUI.
+</p>
+
+<p>
+So, how to get that DAG status dictionary before rendering all the DAGs so we can sort by it? Well, that
+jQuery I tracked down earlier is in a template file called 
+<a href="https://github.com/apache/airflow/blob/v1-9-stable/airflow/www/templates/airflow/dags.html"><code>dags.html</code></a>. Whatever endpoint renders
+that template is what we're after. Sure enough, in the same <code>views.py</code> module as
+<code>/dag_stats</code> we have <a
+                                  href="https://github.com/apache/airflow/blob/a592e732356427b4fd1ed27c890cf82e9cf495f0/airflow/www/views.py#L1795">
+  this</a> (the <code>"/"</code> endpoint). In it there's a complex, parametrized-via-config
+SQLAlchemy query to get and filter and sort the DAGs that will be passed into the template. In lieu
+of adding a complex (though surely more efficient) multi-table query in the body of this endpoint,
+let's just copy <em>all the code</em> from the <code>/dag_stats</code> endpoint and sort the DAGs by
+it just before rendering:
+</p>
+<p>
+<pre>
+<code>
+dags = sorted(dags, key=lambda dag: (-payload[dag.dag_id][1]['count'], dag.dag_id))
+</code>
+</pre>
+</p>
+<p>
+That <code>[1]</code> index is the "running" state dictionary, as surmised (speculated!) by the
+order in which it appears on the GUI.
+</p>
+
+<p>
+This code change -- a single line plus some re-purposing of existing code -- causes all running DAGs
+to be listed first!
+</p>
+
+<div class="h3 py2 left-align">Challenge: When Did My DAG <em>Actually</em> Last Run??</div>
+<img src="./static/dags.png" alt="The default view of Airflow's GUI, which is a list of DAGs,
+          including their names, schedule, owner, status (paused/unpaused), recent tasks, last run,
+          DAG runs, and links">
+
+<p>
+This is a weird one: For some reason Airflow shows the last <code>execution_date</code> in the "Last
+Run" column, and if you want to know the <em>actual</em> last run date/time you have to hover over
+that little "info" span next to the date/time displayed there. In our team's case this causes many,
+if not most, DAGs to show a "last run" date that's 24 hours earlier than the truth. This leads to a
+lot of head-scratching and unnecessary attempts at debugging (DAG code, the Airflow scheduler, etc.)
+-- a poor user experience, and a waste of time!
+</p>
+
+<p>Let's swap these values, shall we? Searching through 
+<a
+  href="https://github.com/apache/airflow/blob/v1-9-stable/airflow/www/templates/airflow/dags.html"><code>dags.html</code></a>
+we see a nicely commented table cell for "Last Run": our target. <code>last_run.start_date</code>
+and <code>last_run.execution_date</code> look to be the two values we want to swap, in addition to
+their swapping their labels.
+</p>
+
+<p>This solves it! The actual last run date displays, as we all expected
+to happen in the first place.
+</p>
+
+<div class="h3 py2 left-align">Challenge: Do You Speak CRON?</div>
+<img src="./static/dags.png" alt="The default view of Airflow's GUI, which is a list of DAGs,
+          including their names, schedule, owner, status (paused/unpaused), recent tasks, last run,
+          DAG runs, and links">
+<p>
+The way DAGs are schedule is by supplying a CRON string to the argument
+<code>schedule_interval</code>. The way the Airflow GUI displays a DAG's schedule is by simply
+rendering the CRON string. However, not everyone "speaks CRON" on our team -- I'm one of those
+people, I have to Google these strings pretty much every time. What's more, I can imagine a scenario
+where a non-engineer peeks in at the DAGs and would gather exactly <em>nothing</em> from, say, <code>0 0 * *
+  *</code>.
+</p>
+
+<p>Surely there's some human-friendlier way to render these? A quick Google search yields <a
+                                                                                            href="https://pypi.org/project/cron-descriptor/">
+  Cron Descriptor
+</a>, "a Python library that converts cron expressions into human readable strings." If we plunk
+that into our environment and import it (<code>from cron_descriptor import get_description</code>), we've nearly reached a readable solution:</p>
+
+<pre style="font-size: .7em;">
+<code>
+def convert_schedule_to_natural_language(cronstring):
+    if dag.schedule_interval and not dag.schedule_interval.startswith('@'):
+        try:
+            dag.schedule_interval = get_description(dag.schedule_interval)
+        except cron_descriptor.Exception.FormatException:
+            pass
+    return dag
+
+...
+
+dags = [convert_schedule_to_natural_language(dag) for dag in dags]
+
+...
+return self.render(...
+</code>
+</pre>
+
+<p>
+Since <code>@hourly</code> and such are already human-readable, we leave those alone. We then
+convert the <code>schedule_interval</code> of every DAG before rendering it. As a result, the
+first two intervals from the above screenshot are translated into 'At 00:00 AM' and 'Every minute',
+respectively. A little weird, but more or less readable!
+</p>
+
+<div class="h2 py2 left-align">Conclusion: Optimize the Widely Used Tools!</div>
+<p>
+All told, these changes took about 75 minutes, including finding the package for translating CRON
+strings into natural language. My estimate is that we'll earn those 75 minutes back across the team in the next 48
+hours. After that, it's all increased-team-productivity gravy. My advice: 
+
+<p>1) Whenever you spot an opportunity like this in a tool that more than a few people use
+regularly, and </p>
+<p>2) it will take an afternoon or less to augment,</p>
+
+<p>
+It's a golden opportunity; take it!
+</p>
