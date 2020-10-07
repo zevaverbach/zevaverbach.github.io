@@ -229,7 +229,7 @@ lot of head-scratching and unnecessary attempts at debugging (DAG code, the Airf
 
 <p>Let's swap these values, shall we? Searching through 
 <a
-  href="https://github.com/apache/airflow/blob/v1-9-stable/airflow/www/templates/airflow/dags.html"><code>dags.html</code></a>
+  href="https://github.com/apache/airflow/blob/a592e732356427b4fd1ed27c890cf82e9cf495f0/airflow/www/templates/airflow/dags.html#L119"><code>dags.html</code></a>
 we see a nicely commented table cell for "Last Run": our target. <code>last_run.start_date</code>
 and <code>last_run.execution_date</code> look to be the two values we want to swap, in addition to
 their swapping their labels.
