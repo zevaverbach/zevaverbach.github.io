@@ -8,31 +8,68 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             max-width: 600px;
-            margin: 100px auto;
+            margin: 80px auto;
             padding: 20px;
-            text-align: center;
             color: #333;
+            line-height: 1.6;
         }
-        h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .construction { font-size: 1.2rem; color: #666; }
-        .todo {
-            margin-top: 40px;
-            padding: 20px;
-            background: #f5f5f5;
-            border-radius: 8px;
-            text-align: left;
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
         }
-        .todo h2 { font-size: 1rem; color: #888; margin-top: 0; }
-        .todo p { color: #555; margin: 0; }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+        }
+        h2 {
+            font-size: 1.2rem;
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin: 12px 0;
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
     <h1>averba.ch</h1>
-    <p class="construction">Under Construction</p>
+    <p class="subtitle">Averbach family sites & projects</p>
 
-    <div class="todo">
-        <h2>TODO</h2>
-        <p>Create a table of contents linking to all GitHub Pages sites.</p>
-    </div>
+    <h2>Family</h2>
+    <ul>
+        <li><a href="https://zev.averba.ch">zev.averba.ch</a> <span class="description">- Zev's blog</span></li>
+        <li><a href="https://sylvia.averba.ch">sylvia.averba.ch</a> <span class="description">- Sylvia's site</span></li>
+        <li><a href="https://augie.averba.ch">augie.averba.ch</a> <span class="description">- Augie's site</span></li>
+        <li><a href="https://simon.averba.ch">simon.averba.ch</a> <span class="description">- Simon's site</span></li>
+        <li><a href="/ollie/">Ollie</a> <span class="description">- The goodest boy</span></li>
+    </ul>
+
+    <h2>Projects</h2>
+    <ul>
+        <li><a href="https://helpers.fun">helpers.fun</a> <span class="description">- GPT-4 generated stories</span></li>
+        <li><a href="https://binary.helpers.fun">binary.helpers.fun</a> <span class="description">- Binary quiz</span></li>
+        <li><a href="https://modulearn.helpers.fun">modulearn.helpers.fun</a> <span class="description">- Learning modules</span></li>
+    </ul>
 </body>
 </html>
