@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Iterative IAM-ing</title>
+  <meta name="description" content="How to initially approach IAM." />
+  <meta name="keywords" content="programming, devops, architecture, AWS" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="Iterative IAM-ing" />
+  <meta property="og:url" content="http://127.0.0.1:8000/iam" />
+  <meta property="og:description" content="How to initially approach IAM." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Zev Averbach" />
+  <meta name="color-scheme" content="dark light">
+  <meta property="og:locale" content="en_US" />
+  <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+  <link rel="stylesheet" href="/static/prism-dark.css?v=0" />
+  <link rel="stylesheet" href="/static/style.css?v=0" />
+  <meta name="theme-color" content="#209cee" />
+  <link rel="canonical" href="http://127.0.0.1:8000/iam" />
+  
+</head> <body>
+  <nav>
+  <div id="logo">
+    <a href="http://[::]:8000/"
+      class="logo-thin">
+      Zev Averbach
+    </a>
+    
+    <h1 class="title" style="color: #8FC33E">
+      Iterative IAM-ing</h1>
+    
+  </div>
+</nav>
+  <div id="body">
+    <p>I've embarked this morning on my first serious AWS voyage. I've used a bunch of AWS services in the past, but unfortunately I never took the IAM piece seriously and skipped over it with a broad AWS-managed permission or two.</p>
+<p>As I'd experienced in past attempts to wrangle with IAM, it was immediately difficult, and after the first five minutes of slogging through the docs I created my first support ticket. While signing up for a new AWS account today I did a little research about the support tiers and read some glowing reviews about it. I actually signed up for the &quot;business&quot; tier because it gives you phone and chat options as well as a one-hour guaranteed turnaround. (no, this isn't a sponsored post! 😝)</p>
+<h2 style='color: #8FC33E'>My First Ticket</h2>
+<p>I'd immediately gotten stuck in deploying <a style='color: #8FC33E' href="https://github.com/zevaverbach/kindchess">my chess server</a> to Elastic Beanstalk because of permissions errors, despite adding what I thought were a number of wide open (back to my old habits! 😊) AWS-managed policies. Part of my problem was that the error given in the console was utterly generic: &quot;permission error&quot; or something along those lines.</p>
+<p>ChatGPT nudged me towards <a style='color: #8FC33E' href="https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3.html">the Elastic Beanstalk CLI</a>, and when I used it to <code>eb init</code> Beanstalk in my local repo it gave a more fine-grained error:</p>
+<pre><code class="language-bash">EB CLI does not have the right permissions to access CodeCommit. List of IAM policies needed by EB CLI, please configure and try again.
+ codecommit:CreateRepository
+ codecommit:CreateBranch
+ codecommit:GetRepository
+ codecommit:ListRepositories
+ codecommit:ListBranches
+</code></pre>
+<p>I only knew enough to search for permission groups with words resembling these, and the only result from such a search (&quot;codecommit&quot;) in <code>https://us-east-1.console.aws.amazon.com/iamv2/home#/groups/details/&lt;MY-GROUP-NAME&gt;/attach-policies</code> yielded</p>
+<pre><code class="language-bash">AWSCodeCommitFullAccess
+AWSCodeCommitPowerUser
+AWSCodeCommitReadOnly
+</code></pre>
+<p>none of which quite fit the bill, as I realized after clicking into their CloudFormation JSON: They were variously too wide open or missing one or two needed permissions. Despite this, I did add the <code>AWSCodeCommitFullAccess</code> permission to my role, but surprisingly this didn't make the CLI error disappear.</p>
+<h2 style='color: #8FC33E'>The Support Call</h2>
+<p>I was pleased to receive a call from a nice person named Varun within 10 minutes after creating the ticket. The connection was great, and once we upgraded to a screenshare via Amazon Chime it was significantly better.</p>
+<p>Varun asked me to replicate the error I was having while sharing my screen.</p>
+<p>I couldn't! 😳</p>
+<p>It turned out that I'd needed to wait a few extra seconds after granting the new permission before it took effect -- and maybe even longer when using the CLI, according to his experience -- and so technically I'd already resolved my own problem. Nonetheless, remember my preamble about wanting to do things <em>properly</em>?</p>
+<h3 style='color: #8FC33E'>Do The Right Thing</h3>
+<p>We took a step back and I replicated the initial error by revoking <code>AWSCodeCommitFullAccess</code>. He then walked me through creating a custom permission <a style='color: #8FC33E' href="https://us-east-1.console.aws.amazon.com/iamv2/home#/policies">here</a>, which was relatively straightforward. To repeat a common complaint, the UI/UX is not amazing on AWS; I appreciate minimalism, but IMO there are some missing visual indicators, for example, to differentiate between a search bar on <em>existing</em> permissions and one on <em>available</em> ones (can you tell the difference??):</p>
+<p><img src="static/existing.png" alt="the console on AWS that shows existing IAM permissions for a given group" />
+<img src="static/new.png" alt="the console on AWS that shows IAM permissions which are available to add to a given group" /></p>
+<p>In any case, I added the missing permissions to a single custom one named <code>beanstalk_least_privileged</code> and attached it to my user.</p>
+<h3 style='color: #8FC33E'>Inching Closer</h3>
+<p>This <em>nearly</em> resolved the issue, as when I ran <code>eb init</code> again, it walked me through its little questionnaire (<code>region: eu-central-1, environment: Python, Python version: 3.11, etc.</code>), at the end of which it said</p>
+<pre><code class="language-bash">Successfully created branch: trunk
+Do you want to set up SSH for your instances?
+(Y/n): 
+</code></pre>
+<p>to which I gleefully tapped <code>Y</code>. However, once I got all the way through the RSA key pair prompts, it blurted out the enigmatic</p>
+<pre><code class="language-bash">ERROR: NotAuthorizedError - Operation Denied. You are not authorized to perform this operation. 
+Encoded authorization failure message: &lt;a bunch of gobbledygook&gt;
+</code></pre>
+<p>If I were to try and resolve that &quot;encoded authorization failure message&quot; with the ensuing additional steps, I'd optimistically estimate that it would take me 30-60 minutes.</p>
+<p>Instead, Arun set me on the right track in only a couple minutes with this command to decode the failure message:</p>
+<pre><code class="language-bash">$ aws sts decode-authorization-message --encoded-message &lt;gobbledygook&gt; 
+
+An error occurred (AccessDenied) when calling the DecodeAuthorizationMessage operation: 
+User: arn:aws:iam::904645255421:user/kindchess-admin is not authorized to perform: 
+sts:DecodeAuthorizationMessage because no identity-based policy allows the 
+sts:DecodeAuthorizationMessage action
+</code></pre>
+<p>Having added the <code>DecodeAuthorizationMessage</code> permission to my user and re-running the <code>aws sts decode-authorization-message ...</code> command, I got a new error:</p>
+<pre><code class="language-bash">{'DecodedMessage': {'allowed': False,
+  'explicitDeny': False,
+  'matchedStatements': {'items': []},
+  'failures': {'items': []},
+  'context': {'principal': {'id': 'AIDA5FIIPED6WJ6CS3GOS',
+    'name': 'kindchess-admin',
+    'arn': 'arn:aws:iam::904645255421:user/kindchess-admin'},
+   'action': 'ec2:ImportKeyPair',
+   'resource': 'arn:aws:ec2:eu-central-1:904645255421:key-pair/aws-eb',
+   'conditions': {'items': [{'key': 'aws:Region',
+      'values': {'items': [{'value': 'eu-central-1'}]}},
+     {'key': 'aws:Service', 'values': {'items': [{'value': 'ec2'}]}},
+     {'key': 'aws:Resource',
+      'values': {'items': [{'value': 'key-pair/aws-eb'}]}},
+     {'key': 'aws:Type', 'values': {'items': [{'value': 'key-pair'}]}},
+     {'key': 'aws:Account', 'values': {'items': [{'value': '904645255421'}]}},
+     {'key': 'aws:ARN',
+      'values': {'items': [{'value': 'arn:aws:ec2:eu-central-1:904645255421:key-pair/aws-eb'}]}},
+     {'key': 'ec2:KeyPairName',
+      'values': {'items': [{'value': 'aws-eb'}]}}]}}}}
+</code></pre>
+<p>A new error is almost always an encouraging sign, right<sup class="footnote-ref" id="fnref-1"><a style='color: #8FC33E' href="#fn-1">1</a></sup>?</p>
+<p>The key piece of info in this data dump is that the <code>ec2:ImportKeyPair</code> permission is missing. Having added that, everything ran as expected! Whew.</p>
+<h3 style='color: #8FC33E'>Extra Wisdom From an AMA With Arun</h3>
+<p>Without any cajoling on my part, Arun stayed on the line with me while I threw a bunch of newbie IAM-related questions at him. That's when I got the &quot;wait a few seconds, or even longer, to allow IAM changes to take effect&quot; nugget.</p>
+<p>I also asked him what sort of tools and abstractions small (1-10 people) groups are using, or should use: He said the console or the CLI should be sufficient. I told him about the &quot;try to spin up cloud asset, get error, add new permission&quot; cycle that I saw echoed <a style='color: #8FC33E' href="https://news.ycombinator.com/item?id=24091875">on Hacker News</a>, and he said this is more or less what he recommends.</p>
+<h3 style='color: #8FC33E'>Extra Wisdom from Shashank: The Docs</h3>
+<p>A couple days after the above events, I got stuck again after having removed all the broad permissions I'd originally made to try and get things moving, and walking through the iterative &quot;try-fail&quot; process of granting the minimum viable ones.</p>
+<p>I created a new support ticket, and just like the first one it actually resolved itself by the time (a few minutes later) I connected with someone. Distributed computing is hard, I guess, and AWS itself is not immune: In some cases you have to wait something like an entire minute for an IAM permission change to go through.</p>
+<p>I of course kept my new friend Shashank on the line to see what additional wisdom I could gain from him, and he really delivered:</p>
+<p>He pointed me to <a style='color: #8FC33E' href="https://docs.aws.amazon.com/service-authorization/latest/reference/reference_policies_actions-resources-contextkeys.html">&quot;the bible&quot; of IAM permissions</a>, which is located at a pretty humble URL 👆. You can find out all the possible IAM permissions for a given AWS service there, as well as the applicable &quot;resources&quot;. He also claimed that by perusing these docs he can often generate the required JSON permissions the first or second time. We used this resource together to help me get the hang of it, and I'm expecting to be using it heavily.</p>
+<h3 style='color: #8FC33E'>Shashank Wisdom Part Deux: CloudTrail</h3>
+<p>Then Shashank told me about CloudTrail, which gives you a nearly comprehensive log of the AWS API calls your users are doing. We added the &quot;Error code&quot; field and this became a game-changer: Now whenever I get an overly vague (or event silent) error while trying to do console- or CLI-based operations, I can look here to see exactly which IAM permission is missing, or any other errors which may have occurred..</p>
+<h2 style='color: #8FC33E'>Tools For Expedient IAM Generation</h2>
+<p>It's hard for me to accept this slow, iterative process for setting <em>only</em> the needed IAM permissions for a given application as the state of the art. A Google search yielded a handful of interesting-looking tools which seem like they could save a lot of time and trouble:</p>
+<ul>
+<li><a style='color: #8FC33E' href="https://github.com/salesforce/policy_sentry">Policy Sentry</a> from Salesforce</li>
+<li><a style='color: #8FC33E' href="https://github.com/Netflix-Skunkworks/aardvark">Aardvark</a> from Netflix</li>
+<li><a style='color: #8FC33E' href="https://github.com/Netflix/Repokid">repokid</a> also from Netflix</li>
+</ul>
+<p>These are in descending order of their most recent commit, Policy Sentry being the only one which has a 2023 commit so far. I'll reach for one of these if (when) this process becomes too onerous, and I've also got my eye on <a style='color: #8FC33E' href="https://aws.amazon.com/cdk/">the Cloud Development Kit</a> (CDK) and some of the abstractions built on top of it.</p>
+<h2 style='color: #8FC33E'>Trudging On</h2>
+<p>Wish me luck on the deployment! After these initial steps with Elastic Beanstalk I'm actually retreating a bit in order to learn to deploy it in a more &quot;manual&quot; way, meaning setting up autoscaling, load balancing, and wiring up databases on my own. In fact, I'm knee deep in <a style='color: #8FC33E' href="https://www.youtube.com/watch?v=SOTamWNgDKc">this FreeCodeCamp course</a> and have scheduled a Cloud Practitioner exam a few weeks from now. One notable thing from this course is that, so far (25% of the way through) the instructor has us using an extremely wide open access policy.</p>
+<!--TODO: link to any sequel posts-->
+
+<section class="footnotes">
+<ol>
+<li id="fn-1"><p>Incidentally, the error was displayed in ugly, backslash-filled, unformatted JSON, not the indented beauty seen above. Come on AWS! A little formatting never hurt anyone. 😢<a style='color: #8FC33E' href="#fnref-1" class="footnote">&#8617;</a></p></li>
+</ol>
+</section>
+ <a id="up-button"
+    style="transform: rotate(-90deg); position: fixed; width: calc(1.8em + 1.5vw); height: calc(1.8em + 1.5vw); right: 15vw; bottom: 5vw; cursor: pointer;"
+    onclick="handleUpButtonClick()">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#8FC33E" class="w-6 h-6">
+        <path fill-rule="evenodd"
+            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm.53 5.47a.75.75 0 00-1.06 0l-3 3a.75.75 0 101.06 1.06l1.72-1.72v5.69a.75.75 0 001.5 0v-5.69l1.72 1.72a.75.75 0 101.06-1.06l-3-3z"
+            clip-rule="evenodd" />
+    </svg>
+</a> <div id="about">
+  
+  <a style="grid-row: span 6;" href="/"><img id='portrait' src="https://www.gravatar.com/avatar/fe783e04644862c30823614f31b9a996/?s=360"
+      alt="smiley picture of shaven-head Zev"></a>
+  <p style="grid-row: span 3; font-weight: 600;" id="about-name">Zev Averbach</p>
+  <p>Excitable software engineer. Constant builder, learner, and teacher. 🌼</p>
+  
+  <div id="links">
+    <a style="color: #8FC33E" href="static/resume.pdf">
+        <svg style="fill: #8FC33E" class="about-icon" width="24" height="24" xmlns="http://www.w3.org/2000/svg"
+            fill-rule="evenodd" clip-rule="evenodd">
+            <title>Résumé</title>
+            <path class="about-icon-fill"
+                d="M3 24h19v-23h-1v22h-18v1zm17-24h-18v22h18v-22zm-1 1h-16v20h16v-20zm-2 16h-12v1h12v-1zm0-3h-12v1h12v-1zm0-3h-12v1h12v-1zm-7.348-3.863l.948.3c-.145.529-.387.922-.725 1.178-.338.257-.767.385-1.287.385-.643 0-1.171-.22-1.585-.659-.414-.439-.621-1.04-.621-1.802 0-.806.208-1.432.624-1.878.416-.446.963-.669 1.642-.669.592 0 1.073.175 1.443.525.221.207.386.505.496.892l-.968.231c-.057-.251-.177-.449-.358-.594-.182-.146-.403-.218-.663-.218-.359 0-.65.129-.874.386-.223.258-.335.675-.335 1.252 0 .613.11 1.049.331 1.308.22.26.506.39.858.39.26 0 .484-.082.671-.248.187-.165.322-.425.403-.779zm3.023 1.78l-1.731-4.842h1.06l1.226 3.584 1.186-3.584h1.037l-1.734 4.842h-1.044z" />
+        </svg>
+    </a>
+
+    <a style="color: #8FC33E" href="https://www.linkedin.com/in/zev-averbach-964572156/">
+        <svg style="fill: #8FC33E" class="about-icon" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink" id="body_1" width="28" height="24">
+            <title>LinkedIn</title>
+            <g transform="matrix(0.044094488 0 0 0.044094488 -0 0.18897599)">
+                <g transform="matrix(0.1 0 -0 -0.1 0 540)">
+                    <path class="about-icon-fill"
+                        d="M278 5376C 173 5338 77 5249 38 5152L38 5152L15 5095L15 2720L15 345L38 288C 69 212 143 132 222 89L222 89L285 55L2685 55L5085 55L5147 89C 5224 130 5293 202 5328 278L5328 278L5355 335L5355 2720L5355 5105L5328 5162C 5293 5238 5219 5315 5145 5354L5145 5354L5085 5385L2700 5387C 755 5389 308 5387 278 5376zM1329 4641C 1413 4615 1466 4582 1531 4513C 1594 4447 1620 4402 1645 4316C 1668 4239 1661 4117 1631 4038C 1535 3789 1244 3670 1007 3783C 713 3922 649 4304 881 4530C 1000 4645 1176 4689 1329 4641zM3867 3434C 3912 3426 3987 3406 4034 3389C 4319 3286 4471 3073 4543 2675C 4565 2558 4565 2536 4565 1695L4565 1695L4565 835L4170 835L3775 835L3769 1615C 3764 2325 3762 2400 3746 2455C 3718 2548 3680 2617 3633 2661C 3568 2721 3512 2742 3398 2748C 3175 2759 3038 2690 2960 2525C 2896 2388 2896 2390 2890 1575L2890 1575L2885 835L2490 835L2095 835L2092 2113L2090 3390L2475 3390L2860 3390L2860 3213L2860 3035L2887 3075C 3022 3277 3244 3417 3477 3449C 3561 3461 3757 3453 3867 3434zM1598 2113L1595 835L1200 835L805 835L802 2113L800 3390L1200 3390L1600 3390L1598 2113z"
+                        stroke="none" fill-rule="nonzero" />
+                    <path class="about-icon-negative"
+                        d="M5813 695C 5770 674 5726 642 5704 617C 5558 450 5590 192 5770 71C 5843 23 5910 6 6005 12C 6277 30 6428 339 6279 572C 6242 629 6205 662 6136 697C 6093 720 6069 725 5985 728C 5886 732 5884 731 5813 695zM6103 667C 6177 633 6234 579 6267 512C 6291 464 6295 442 6295 375C 6295 309 6290 285 6268 238C 6151 -12 5802 -14 5680 235C 5646 303 5645 432 5676 501C 5753 667 5942 741 6103 667z"
+                        stroke="none" fill-rule="nonzero" />
+                    <path class="about-icon-fill"
+                        d="M5850 370L5850 180L5875 180C 5900 180 5900 181 5900 265L5900 265L5900 350L5934 350C 5965 350 5971 344 6021 265C 6068 191 6078 180 6103 180C 6135 180 6137 174 6069 277L6069 277L6021 348L6048 355C 6113 371 6144 438 6116 503C 6096 551 6071 560 5949 560L5949 560L5850 560L5850 370zM6052 503C 6062 494 6070 473 6070 454C 6070 407 6041 390 5963 390L5963 390L5900 390L5900 455L5900 520L5967 520C 6015 520 6039 515 6052 503z"
+                        stroke="none" fill-rule="nonzero" />
+                </g>
+            </g>
+        </svg>
+    </a>
+
+    <a style="color: #8FC33E" href="https://github.com/zevaverbach">
+        <svg style="fill: #8FC33E" class="about-icon" width="24" height="24" viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg">
+            <title>GitHub</title>
+            <path class="about-icon-fill"
+                d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+        </svg>
+    </a>
+</div>
+</div> </div><!-- #body -->
+              <script>
+    let upButtonIsBackButton = true;
+    const upButton = document.getElementById("up-button");
+    function handleUpButtonClick() {
+        if (upButtonIsBackButton) {
+            window.location.href = "/posts.html";
+        } else {
+            document.documentElement.scrollTo({top: 0, behavior: 'smooth'});
+        }
+    }
+    document.addEventListener("scroll", handleScroll);
+    function handleScroll() {
+        const {scrollTop, clientHeight} = document.documentElement;
+        if (scrollTop === 0) {
+            upButtonIsBackButton = true;
+            upButton.style.transform = `rotate(-90deg)`;
+        } else {
+            upButtonIsBackButton = false;
+            if (scrollTop <= clientHeight) {
+                upButton.style.transform = `rotate(${(-Math.abs(scrollTop - clientHeight) / clientHeight) * 90}deg)`;
+            } else {
+                upButton.style.transform = `rotate(0deg)`;
+            }
+        }
+    }
+    document.addEventListener("DOMContentLoaded", event => {
+        let imgs = document.getElementsByTagName('img');
+
+        for (let i = 0; i < imgs.length; i++) {
+            let img = imgs[i];
+            img.title = img.alt;
+        }
+
+        const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+        // Set a class on the html element
+        if (prefersDarkScheme.matches) {
+            console.log('set data-theme to dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            console.log('set data-theme to light');
+        }
+
+        // Listener to switch themes when system settings are changed
+        prefersDarkScheme.addListener((e) => {
+            if (e.matches) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                console.log('set data-theme to dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                console.log('set data-theme to light');
+            }
+        });
+    })
+</script>
+              <script src="/static/prism-dark.js"></script>
+</body>
+
+</html>

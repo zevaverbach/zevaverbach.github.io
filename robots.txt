@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+Sitemap: https://zev.averba.ch/sitemap.xml
+

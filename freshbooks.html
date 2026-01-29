@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
-<!DOCTYPE html>
-<html class="no-js" lang="en">
-
 <head>
   <meta charset="utf-8" />
-  <title>Zev Averbach | Projects</title>
-  <meta name="description" content="Table of contents for Zev Averbach's projects" />
-  <meta name="keywords" content="Zev Averbach, projects, web development, automation, javascript, python, programming, full-stack" />
+  <title>How To Download All Your Freshbooks Clients and Invoices</title>
+  <meta name="description" content="Using my Freshbooks API wrapper, download all your data in JSON format." />
+  <meta name="keywords" content="freshbooks, Python, API, download" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="index, follow" />
-  <meta property="og:title" content="Zev Averbach | Projects" />
-  <meta property="og:url" content="http://127.0.0.1:8000/projects" />
-  <meta property="og:description" content="Table of contents for Zev Averbach's projects" />
+  <meta property="og:title" content="How To Download All Your Freshbooks Clients and Invoices" />
+  <meta property="og:url" content="http://127.0.0.1:8000/freshbooks" />
+  <meta property="og:description" content="Using my Freshbooks API wrapper, download all your data in JSON format." />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Zev Averbach" />
   <meta name="color-scheme" content="dark light">
@@ -22,74 +19,118 @@
   <link rel="stylesheet" href="/static/prism-dark.css?v=0" />
   <link rel="stylesheet" href="/static/style.css?v=0" />
   <meta name="theme-color" content="#209cee" />
-  <link rel="canonical" href="http://127.0.0.1:8000/projects" />
+  <link rel="canonical" href="http://127.0.0.1:8000/freshbooks" />
   
-</head>
-
-<body>
+</head> <body>
   <nav>
   <div id="logo">
     <a href="http://[::]:8000/"
-      class="logo">
+      class="logo-thin">
       Zev Averbach
     </a>
     
-    <div id="nav-items">
-    
-    <a href="/">
-        <div class="nav-item-link">
-            
-                about
-            </div>
-            
-    </a>
-
-    
-            <div class="nav-current-page">
-                
-                projects</div>
-            
-
-    
-    <a href="posts.html">
-        <div class="nav-item-link">
-            
-                posts
-            </div>
-            
-    </a>
-</div>
+    <h1 class="title" style="color: #ffa500">
+      How To Download All Your Freshbooks Clients and Invoices</h1>
     
   </div>
 </nav>
   <div id="body">
-    <p>
-      Maybe it's my bias towards novelty, but I'm not that blown away by what I've accomplished so far as a software
-      engineer.
-      To be honest, I get an <span class="italic">imposter</span> sensation when applying "software engineer" to myself.
-    </p>
-    <p>
-      Despite this, I can acknowledge that the projects below were at one time near the edge of my capability, and in
-      every single case helped me grow technically.
-    </p>
-    <p>
-      I don't know if this feeling will ever change, whether there's any escape from the "treadmill" of technical
-      accomplishments, but as of the fall of 2023 my technical "edge" lies in systems design, as I immerse myself in AWS
-      and <a href="https://www.amazon.com/stores/Alex-Xu/author/B08BNMFT7P">Alex Xu's books</a>.
-    </p>
-  </div>
-  <div id="toc">
-    
-  </div>
-  <div id="about">
+    <p>I closed my transcription business a month ago but still had some outstanding invoices to collect, and they all lived in Freshbooks. However, I canceled my Freshbooks subscription -- prepaid through mid-July 2023 -- and so needed to download all the info, at least about the outstanding invoices<sup class="footnote-ref" id="fnref-1"><a style='color: #ffa500' href="#fn-1">1</a></sup>.</p>
+<p>I figured, though, that I may as well download the entire archive of clients and invoices -- 10+ years' worth! -- for future marketing purposes, and just to have a nice record of the business.</p>
+<p>Luckily, I had published <a style='color: #ffa500' href="https://pypi.org/project/avt-fresh/">this Python library</a> for interacting with the Freshbooks API, which got me most of the way towards downloading, serializing and storing all the client and invoice data.</p>
+<h2 style='color: #ffa500'>Setup</h2>
+<pre><code class="language-bash">&gt; mkdir all_my_invoices &amp;&amp; cd $_
+&gt; virtualenv env &amp;&amp; source env/bin/activate
+&gt; pip install ipython simplejson avt-fresh
+</code></pre>
+<h2 style='color: #ffa500'>Get All Clients and Serialize 'Em</h2>
+<pre><code class="language-python">import avt_fresh
+import json as j
+import pathlib as p
+
+cl = avt_fresh.ApiClient(client_secret=&quot;...&quot;, client_id=&quot;...&quot;, redirect_uri=&quot;...&quot;, account_id=&quot;...&quot;)
+clients = cl.get_all_clients()
+client_ids = [c.client_id for c in clients]
+clients_json = []
+
+for client in clients:
+    d = c._asdict()
+    del d['email_contact_id_lookup']
+    del d['contact_id_email_lookup']
+    clients_json.append(d)
+
+p.Path('all_my_clients.json').write_text(j.dumps(clients_json, indent=2)) 
+</code></pre>
+<h2 style='color: #ffa500'>Get All Invoices For All Clients and Serialize 'Em</h2>
+<pre><code class="language-python">import avt_fresh
+import simplejson as json
+import pathlib as p
+
+cl = avt_fresh.ApiClient(client_secret=&quot;...&quot;, client_id=&quot;...&quot;, redirect_uri=&quot;...&quot;, account_id=&quot;...&quot;)
+
+
+def get_and_serialize_all_invoices_for_client(client_id):
+    invs = cl.get_all_invoices_for_client_id(client_id)
+    serialized = []
+    for i in invs:
+        d = i._asdict()
+        for key, val in d.items():
+            if isinstance(val, dt.date):
+                d[key] = val.toordinal()
+        # some data 
+        del d['allowed_gateways']
+        del d['line_description_line_id_dict']
+        del d['line_id_line_dict']
+        new_lines = []
+        for l in d['lines']:
+            dl = l._asdict()
+            for key, val in dl.items():
+                if isinstance(val, dt.date):
+                    dl[key] = val.toordinal()
+            new_lines.append(dl)
+        d['lines'] = new_lines
+        serialized.append(d)
+    return serialized
+
+clients = json.loads(p.Path('all_my_clients.json').read_text())
+invoices = {}
+
+for client_id in client_ids:
+    invoices[client_id] = get_and_serialize_all_invoices_for_client(client_id)
+
+p.Path('all_client_invoices.json').write_text(json.dumps(invoices, indent=2)) 
+</code></pre>
+<h2 style='color: #ffa500'>Future Improvements</h2>
+<p>I'm not sure how likely I am to circle back and improve this library since I don't expect to use Freshbooks again in the future. However, there are a few low-hanging fruits which would make it a little nicer to work with, especially when it comes to serialization:</p>
+<ul>
+<li>use <code>dataclasses</code> instead of <code>NamedTuples</code></li>
+<li>make the invoices and clients more serializable with maybe a <code>serialize</code> method which handles the <code>date</code> and <code>Decimal</code> objects</li>
+<li>explain in the docs how pagination is abstracted away, which is kind of nice</li>
+<li>parallelize the API calls by default</li>
+</ul>
+<section class="footnotes">
+<ol>
+<li id="fn-1"><p>I should mention that Freshbooks is the <em>only</em> SaaS I've run into that will immediately shut your account down when you cancel your account, <em>even if you've already paid for a year's subscription</em>! I had to beg them to give me a brief window of access in order to perform the above steps -- five days to be exact, even though I still had 2+ weeks left in the prepaid subscription.<a style='color: #ffa500' href="#fnref-1" class="footnote">&#8617;</a></p></li>
+</ol>
+</section>
+ <a id="up-button"
+    style="transform: rotate(-90deg); position: fixed; width: calc(1.8em + 1.5vw); height: calc(1.8em + 1.5vw); right: 15vw; bottom: 5vw; cursor: pointer;"
+    onclick="handleUpButtonClick()">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffa500" class="w-6 h-6">
+        <path fill-rule="evenodd"
+            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm.53 5.47a.75.75 0 00-1.06 0l-3 3a.75.75 0 101.06 1.06l1.72-1.72v5.69a.75.75 0 001.5 0v-5.69l1.72 1.72a.75.75 0 101.06-1.06l-3-3z"
+            clip-rule="evenodd" />
+    </svg>
+</a> <div id="about">
   
-  <a style="grid-row: span 2;" href="/"><img id='portrait' src="https://www.gravatar.com/avatar/fe783e04644862c30823614f31b9a996/?s=360"
+  <a style="grid-row: span 6;" href="/"><img id='portrait' src="https://www.gravatar.com/avatar/fe783e04644862c30823614f31b9a996/?s=360"
       alt="smiley picture of shaven-head Zev"></a>
+  <p style="grid-row: span 3; font-weight: 600;" id="about-name">Zev Averbach</p>
   <p>Excitable software engineer. Constant builder, learner, and teacher. 🌼</p>
   
   <div id="links">
-    <a style="color: #aeddff" href="static/resume.pdf">
-        <svg style="fill: #aeddff" class="about-icon" width="24" height="24" xmlns="http://www.w3.org/2000/svg"
+    <a style="color: #ffa500" href="static/resume.pdf">
+        <svg style="fill: #ffa500" class="about-icon" width="24" height="24" xmlns="http://www.w3.org/2000/svg"
             fill-rule="evenodd" clip-rule="evenodd">
             <title>Résumé</title>
             <path class="about-icon-fill"
@@ -97,8 +138,8 @@
         </svg>
     </a>
 
-    <a style="color: #aeddff" href="https://www.linkedin.com/in/zev-averbach-964572156/">
-        <svg style="fill: #aeddff" class="about-icon" xmlns="http://www.w3.org/2000/svg"
+    <a style="color: #ffa500" href="https://www.linkedin.com/in/zev-averbach-964572156/">
+        <svg style="fill: #ffa500" class="about-icon" xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink" id="body_1" width="28" height="24">
             <title>LinkedIn</title>
             <g transform="matrix(0.044094488 0 0 0.044094488 -0 0.18897599)">
@@ -117,8 +158,8 @@
         </svg>
     </a>
 
-    <a style="color: #aeddff" href="https://github.com/zevaverbach">
-        <svg style="fill: #aeddff" class="about-icon" width="24" height="24" viewBox="0 0 24 24"
+    <a style="color: #ffa500" href="https://github.com/zevaverbach">
+        <svg style="fill: #ffa500" class="about-icon" width="24" height="24" viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg">
             <title>GitHub</title>
             <path class="about-icon-fill"
@@ -126,13 +167,13 @@
         </svg>
     </a>
 </div>
-</div>
-  <script>
+</div> </div><!-- #body -->
+              <script>
     let upButtonIsBackButton = true;
     const upButton = document.getElementById("up-button");
     function handleUpButtonClick() {
         if (upButtonIsBackButton) {
-            window.location.href = "";
+            window.location.href = "/posts.html";
         } else {
             document.documentElement.scrollTo({top: 0, behavior: 'smooth'});
         }
@@ -183,6 +224,7 @@
         });
     })
 </script>
+              <script src="/static/prism-dark.js"></script>
 </body>
 
 </html>
